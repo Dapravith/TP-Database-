@@ -1,0 +1,66 @@
+#1
+select title
+from movie
+where director = "Steven Spielberg";
+
+#2
+
+select distinct year
+from movie natural join rating
+where stars = 4 or stars = 5
+order by year;
+
+#3
+
+select title
+from movie 
+where mid not in (select distinct mid from rating);
+
+#4
+
+select name
+from reviewer natural join rating
+where isnull(ratingdate);
+
+#5
+select name, title, stars, ratingdate
+from movie natural join rating natural join reviewer
+order by name, title, stars;
+
+#6
+
+select distinct name 
+from movie natural join rating natural join reviewer
+where title = "Gone with the Wind";
+
+#7
+
+select name, title, stars
+from movie natural join rating natural join reviewer
+where director = name;
+
+#8
+
+select name as c1
+from reviewer
+union
+select title as c1
+from movie
+order by c1;
+
+#9
+select title
+from movie 
+where mid not in (select mid
+						from rating natural join reviewer
+						where name = "Chris Jackson");
+						
+#10
+create view rating_reviewer as
+select name, rid, mid,stars
+from rating natural join reviewer;
+
+select distinct r1.name as reviewer1, r2.name as reviewer2
+from rating_reviewer as r1 join rating_reviewer as r2
+	on r1.mID = r2.mid and r1.name < r2.name
+order by reviewer1;

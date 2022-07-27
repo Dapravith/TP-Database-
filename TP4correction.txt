@@ -1,0 +1,63 @@
+#1
+select c.id, c.name, o.id,o.order_date
+from customer_t c join order_t o
+	on c.ID = o.customer_id;
+#2
+select ol.order_id, p.id, p.description, ol.quantity
+from product_t p join order_line_t ol
+	on p.id = ol.product_id
+order by ol.order_id;
+
+#3
+select c.id, c.name, p.id, p.description
+from customer_t c join order_t o join order_line_t ol join product_t p
+	on c.id = o.customer_id and o.id = ol.order_ID and p.id = ol.product_id
+order by c.id;
+
+select c.id, c.name, p.id, p.description
+from customer_t c, product_t p
+where (c.id, p.id) in
+	(select customer_id, product_id 
+	from order_t o join order_line_t ol on o.id = ol.order_id)
+order by c.id;
+
+
+#4
+select c.id, c.name, o.id,o.order_date
+from customer_t c left join order_t o
+	on c.ID = o.customer_id;
+
+#5
+select *
+from product_t
+where standard_price = (select min(standard_price) from product_t);
+
+select *
+from product_t p
+where standard_price <= all 
+	(select standard_price from product_t p1 where p1.id <> p.id and not isnull(standard_price));
+	
+select *
+from product_t p
+where not standard_price > any 
+	(select standard_price from product_t p1 where p1.id <> p.id and not isnull(standard_price));
+	
+select *
+from product_t p
+where not exists 
+	(select * 
+	from product_t p1 
+	where p1.id <> p.id and p.standard_price > p1.standard_price)
+	and not isnull(standard_price);
+
+#6
+select *
+from product_t p
+where exists (select * 
+	from product_t p1 
+	where p1.id <> p.id and p1.description = p.description);
+
+select p.*
+from product_t p join product_t p1
+	on p.ID <> p1.ID and p.description = p1.description;
+	
